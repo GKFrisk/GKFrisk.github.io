@@ -2,7 +2,7 @@
 <html lang="no">
 <head>
   <meta charset="UTF-8" />
-  <title>Dagens vits</title>
+  <title>Dagens vits – GK</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -15,41 +15,51 @@
       margin: 0;
       height: 100vh;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      color: #ffffff;
+      background: #f4f6f8;
+      color: #0f172a;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
+    /* GK logo top-left */
+    .gk-logo {
+      position: fixed;
+      top: 24px;
+      left: 24px;
+      height: 48px;
+    }
+
     .card {
       max-width: 900px;
       width: 90%;
-      padding: 3rem;
-      border-radius: 24px;
-      background: rgba(30, 41, 59, 0.95);
-      box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+      padding: 3.5rem;
+      border-radius: 20px;
+      background: #ffffff;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.12);
       text-align: center;
+      border-top: 10px solid #0b7a4b; /* GK grønn */
     }
 
     h1 {
-      font-size: 3rem;
+      font-size: 2.6rem;
       margin-bottom: 2rem;
+      color: #0b7a4b;
     }
 
     #joke {
-      font-size: 2.2rem;
-      line-height: 1.4;
+      font-size: 2.1rem;
+      line-height: 1.45;
     }
 
     .date {
       margin-top: 2.5rem;
       font-size: 1.1rem;
-      opacity: 0.75;
+      opacity: 0.7;
     }
 
     .error {
-      color: #fca5a5;
+      color: #c0392b;
       font-size: 1.6rem;
     }
   </style>
@@ -57,14 +67,16 @@
 
 <body>
 
+  <!-- GK logo -->
+  <img src="gk-logo.png" alt="GK" class="gk-logo" />
+
   <div class="card">
     <h1>😂 Dagens vits</h1>
-
     <div id="joke">Laster vits …</div>
-
     <div class="date" id="date"></div>
   </div>
 
+  <!-- Embedded fallback JSON -->
   <script id="jokes-data" type="application/json">
 {
   "jokes": [
@@ -95,11 +107,9 @@
     "Alle barna vasket unntatt Knut, han var klut.",
     "Alle barna bygde hus unntatt Geir, han bygde reir.",
     "Alle barna kom hjem fra jungelen unntatt Jonas, han gikk seg vill i Amazonas.",
-    "Alle barna var født fortapt unntatt Rakel, hun var et mirakel." ,
-    "Alle barna tegnet en apekatt unntatt Kjell han satt modell"
+    "Alle barna var født fortapt unntatt Rakel, hun var et mirakel.",
+    "Alle barna tegnet en apekatt unntatt Kjell, han satt modell."
   ]
-
-
 }
   </script>
 
@@ -108,39 +118,26 @@
       try {
         let data = null;
 
-        // Try fetching the external JSON (works when served over HTTP)
         try {
           const response = await fetch("jokes.json", { cache: "no-store" });
-          if (response.ok) {
-            data = await response.json();
-          } else {
-            throw new Error('Fetch failed with status ' + response.status);
-          }
-        } catch (fetchError) {
-          // Fallback: try the embedded JSON script (works when opening file://)
-          const el = document.getElementById('jokes-data');
-          if (el && el.textContent) {
-            data = JSON.parse(el.textContent);
-          } else {
-            throw fetchError;
-          }
-        }
-
-        if (!data || !data.jokes || data.jokes.length === 0) {
-          throw new Error("Ingen vitser funnet");
+          if (response.ok) data = await response.json();
+          else throw new Error();
+        } catch {
+          const el = document.getElementById("jokes-data");
+          data = JSON.parse(el.textContent);
         }
 
         const jokes = data.jokes;
-
         const today = new Date();
+
         const seed =
           today.getFullYear() * 1000 +
           today.getMonth() * 50 +
           today.getDate();
 
-        const jokeOfTheDay = jokes[seed % jokes.length];
+        document.getElementById("joke").textContent =
+          jokes[seed % jokes.length];
 
-        document.getElementById("joke").textContent = jokeOfTheDay;
         document.getElementById("date").textContent =
           today.toLocaleDateString("no-NO", {
             weekday: "long",
@@ -149,10 +146,10 @@
             day: "numeric"
           });
 
-      } catch (error) {
+      } catch (e) {
         document.getElementById("joke").innerHTML =
           "<div class='error'>Kunne ikke laste dagens vits</div>";
-        console.error(error);
+        console.error(e);
       }
     }
 
