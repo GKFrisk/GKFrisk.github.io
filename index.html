@@ -22,23 +22,24 @@
       justify-content: center;
     }
 
-    /* GK logo top-left */
-    .gk-logo {
-      position: fixed;
-      top: 24px;
-      left: 24px;
-      height: 48px;
-    }
-
     .card {
+      position: relative; /* VIKTIG */
       max-width: 900px;
       width: 90%;
       padding: 3.5rem;
+      padding-top: 4.8rem; /* plass til logo */
       border-radius: 20px;
       background: #ffffff;
       box-shadow: 0 20px 40px rgba(0,0,0,0.12);
       text-align: center;
-      border-top: 10px solid #0b7a4b; /* GK grønn */
+      border-top: 10px solid #0b7a4b;
+    }
+
+    .gk-logo {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      height: 36px;
     }
 
     h1 {
@@ -67,10 +68,10 @@
 
 <body>
 
-  <!-- GK logo -->
-  <img src="gk-logo.png" alt="GK" class="gk-logo" />
-
   <div class="card">
+    <!-- GK logo INSIDE card -->
+    <img src="gk-logo.png" alt="GK" class="gk-logo" />
+
     <h1>😂 Dagens vits</h1>
     <div id="joke">Laster vits …</div>
     <div class="date" id="date"></div>
